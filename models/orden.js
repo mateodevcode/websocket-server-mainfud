@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 const { models, Schema, model } = mongoose;
 
 const itemSchema = new Schema({
-  id: {
-    type: String,
-    required: true,
-  },
   image: {
     type: String,
     required: true,
@@ -25,10 +21,6 @@ const itemSchema = new Schema({
 });
 
 const pedidoSchema = new Schema({
-  id: {
-    type: String,
-    required: true,
-  },
   pedido: {
     type: String,
     required: true,
