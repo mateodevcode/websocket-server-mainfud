@@ -40,6 +40,49 @@ export const orden_socket = (io) => {
       io.emit("server:ordenes", ordenes); // Emitir a todos los clientes conectados
     });
 
+    socket.on(
+      "client:eliminar_producto_orden",
+      async (id_orden, id_producto) => {
+        const orden = await Orden.findById(id_orden);
+        if (!orden) {
+          return socket.emit("server:error", "Orden no encontrada");
+        }
+
+        // Eliminar el item de cada pedido
+        orden.listaPedidos = orden.listaPedidos
+          .map((pedido) => {
+            // Filtrar los items quitando el que coincide con el id
+            pedido.items = pedido.items.filter(
+              (item) => item._id.toString() !== id_producto
+            );
+
+            return pedido;
+          })
+          // Eliminar el pedido si ya no tiene items
+          .filter((pedido) => pedido.items.length > 0);
+
+        // Recalcular totales
+        let totalOrden = 0;
+        orden.listaPedidos = orden.listaPedidos.map((pedido) => {
+          const totalPedido = pedido.items.reduce(
+            (acc, item) => acc + item.precio * item.cantidad,
+            0
+          );
+          pedido.total = totalPedido;
+          totalOrden += totalPedido;
+          return pedido;
+        });
+
+        orden.total = totalOrden;
+
+        // Guardar cambios
+        await orden.save();
+
+        const ordenes = await Orden.find(); // Obtener todas las órdenes actualizadas
+        io.emit("server:ordenes", ordenes);
+      }
+    );
+
     socket.on("disconnect", () => {
       console.log("Cliente desconectado:", socket.id);
     });
