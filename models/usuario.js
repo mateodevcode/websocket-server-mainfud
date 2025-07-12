@@ -59,6 +59,14 @@ const usuarioSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    rol: {
+      type: String,
+      default: "usuario", // Agregar rol por defecto
+    },
+    cargo: {
+      type: String,
+      default: "", // Agregar cargo por defecto
+    },
   },
   {
     timestamps: true,

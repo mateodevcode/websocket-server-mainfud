@@ -74,6 +74,10 @@ const ordenSchema = new Schema(
       type: String,
       default: "",
     },
+    cuenta_solicitada: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
