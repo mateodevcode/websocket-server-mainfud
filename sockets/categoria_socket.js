@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Categoria from "../models/categoria.js";
+const { ObjectId } = mongoose.Types;
 
 export const categoria_socket = (io) => {
   // Evento cuando un cliente se conecta
@@ -11,33 +13,34 @@ export const categoria_socket = (io) => {
       socket.emit("server:categorias", categorias); // Solo a ese cliente
     });
 
-    // // Crear un nuevo usuario
-    // socket.on("client:crear_usuario", async (data) => {
-    //   const newUser = new User(data);
-    //   await newUser.save(); // Guardar el usuario en la base de datos
-    //   const usuarios = await User.find(); // Obtener todos los usuarios
-    //   io.emit("server:usuarios", usuarios); // Emitir a todos
-    // });
+    socket.on("client:reordenar_categorias", async (categorias) => {
+      try {
+        // const dbClient = await clientPromise;
+        // const db = dbClient.db(); // o db('nombre') si lo necesitas
+        const collection = mongoose.connection.collection("categorias");
 
-    // // Eliminar un usuario
-    // socket.on("client:eliminar_usuario", async (id) => {
-    //   await User.findByIdAndDelete(id);
-    //   const usuarios = await User.find(); // Obtener todos los usuarios actualizados
-    //   io.emit("server:usuarios", usuarios); // Emitir a todos
-    // });
+        // Construir las operaciones de bulkWrite
+        const operations = categorias.map((cat) => ({
+          updateOne: {
+            filter: { _id: new ObjectId(cat._id) },
+            update: { $set: { position: cat.position } }, // o cat.position si ya viene
+          },
+        }));
 
-    // // Actualizar un usuario
-    // socket.on("client:actualizar_usuario", async (id, data) => {
-    //   const usuario = await User.findByIdAndUpdate(id, data, {
-    //     new: true,
-    //   });
-    //   if (!usuario) {
-    //     return socket.emit("server:error", "Usuario no encontrado");
-    //   }
-    //   io.emit("server:actualizar_usuario", usuario); // Emitir a todos los clientes conectados
-    //   const usuarios = await User.find(); // Obtener todos los usuarios actualizados
-    //   io.emit("server:usuarios", usuarios); // Emitir a todos
-    // });
+        // Ejecutar el bulkWrite
+        await collection.bulkWrite(operations);
+
+        const updatedCategorias = await Categoria.find();
+
+        // Emitir a todos los clientes conectados que se reordenó
+        io.emit("server:reordenar_categorias", updatedCategorias);
+
+        console.log("Categorías reordenadas correctamente.");
+      } catch (error) {
+        console.error("Error reordenando categorías:", error);
+        socket.emit("server:error", "Error al reordenar categorías");
+      }
+    });
 
     socket.on("disconnect", () => {
       console.log("Cliente desconectado:", socket.id);

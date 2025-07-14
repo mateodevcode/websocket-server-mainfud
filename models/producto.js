@@ -37,6 +37,14 @@ const productoSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    disponible_comer_aqui: {
+      type: Boolean,
+      default: true,
+    },
+    disponible_para_llevar: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
