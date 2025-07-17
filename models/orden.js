@@ -78,6 +78,10 @@ const ordenSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    telefono: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
