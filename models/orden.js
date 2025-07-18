@@ -82,6 +82,10 @@ const ordenSchema = new Schema(
       type: String,
       default: "",
     },
+    comentarios: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
