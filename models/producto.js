@@ -45,6 +45,12 @@ const productoSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    insumos: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Producto", // o "Insumo", si los tienes separados
+      },
+    ],
   },
   {
     timestamps: true,

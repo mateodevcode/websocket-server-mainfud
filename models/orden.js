@@ -18,6 +18,20 @@ const itemSchema = new Schema({
     type: Number,
     required: true,
   },
+  categoria: {
+    type: String,
+    default: "",
+  },
+  descripcion: {
+    type: String,
+    default: "",
+  },
+  insumos: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Productos",
+    },
+  ],
 });
 
 const pedidoSchema = new Schema({
