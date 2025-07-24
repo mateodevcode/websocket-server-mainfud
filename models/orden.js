@@ -100,6 +100,10 @@ const ordenSchema = new Schema(
       type: String,
       default: "",
     },
+    metodo_de_pago: {
+      type: String,
+      default: "efectivo",
+    },
   },
   {
     timestamps: true,
