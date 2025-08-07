@@ -7,7 +7,7 @@ const categoriaSchema = new Schema(
       type: String,
       required: true,
     },
-    imagen: {
+    imageUrl: {
       type: String,
       required: true,
     },
